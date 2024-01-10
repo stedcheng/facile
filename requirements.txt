@@ -1,6 +1,6 @@
 streamlit
 numpy
 pandas
-re
+regex
 folium
 streamlit_folium
