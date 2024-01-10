@@ -1,0 +1,6 @@
+streamlit
+numpy
+pandas
+re
+folium
+streamlit_folium
