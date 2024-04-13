@@ -1,15 +1,3 @@
-# Command prompt
-# start in streamlit folder
-# (cd) C:\Users\asus\OneDrive\Documents\Streamlit\venv\Scripts\activate.bat
-# streamlit run app.py
-
-# Reuploading
-# git config --global core.autocrlf true
-# git add .
-# git status
-# git commit -m 'optional text here'
-# git push
-
 # Initialization
 
 import streamlit as st
@@ -124,7 +112,7 @@ two_schedules['Modified Schedule'] = multiple(two_schedules['Time'])
 # st.dataframe(two_schedules)
 
 st.write('FACILE: Free Assistance for Class Indices in the Luck-Based Enlistment')
-st.write('Version 5.2, Last updated: 13 April 2024')
+st.write('Version 5.1, Last updated: 13 April 2024')
 
 # Tabs
 
