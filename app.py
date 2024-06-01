@@ -7,6 +7,7 @@ import re
 import json
 import folium
 from streamlit_folium import folium_static
+from pandas.errors import EmptyDataError
 
 st.set_page_config(layout = 'wide')
 st.title('FACILE Scheduler')
@@ -60,9 +61,13 @@ dept_full_names = dept_csv['full_name'].sort_values()
 
 df_list = []
 for i in range(len(dept_short_names)):
-    df = pd.read_csv('schedules_202302_20240225/'+dept_short_names[i]+'.csv')
-    df['Department'] = dept_full_names[i]
-    df_list.append(df)
+    # edit this whenever changing the schedules
+    try:
+        df = pd.read_csv('schedules_202400_20240601/'+dept_short_names[i]+'.csv')
+        df['Department'] = dept_full_names[i]
+        df_list.append(df)
+    except EmptyDataError:
+        df = ''
 
 complete_list = pd.concat(df_list, ignore_index = True)
 complete_list['Modified Schedule'] = multiple(complete_list['Time'])
@@ -112,7 +117,7 @@ two_schedules['Modified Schedule'] = multiple(two_schedules['Time'])
 # st.dataframe(two_schedules)
 
 st.write('FACILE: Free Assistance for Class Indices in the Luck-Based Enlistment')
-st.write('Version 5.1, Last updated: 13 April 2024')
+st.write('Version 5.2, Last updated: 1 June 2024')
 
 # Tabs
 
@@ -452,10 +457,10 @@ you want to access.''')
                 col0, col1, col2, col3 = st.columns([0.05, 0.1, 0.1, 0.5])
                 with col0: st.write(i+1)
                 with col1:
-                    year = st.number_input('Year', 2018, 2023, value = 2023, label_visibility = 'collapsed', key = i*3+1)
+                    year = st.number_input('Year', 2018, 2025, value = 2024, label_visibility = 'collapsed', key = i*3+1)
                     year = str(year)
                 with col2:
-                    semester = st.number_input('Semester', 0, 2, value = 2, label_visibility = 'collapsed', key = i*3+2)
+                    semester = st.number_input('Semester', 0, 2, value = 0, label_visibility = 'collapsed', key = i*3+2)
                     semester = str(semester)
                 with col3:
                     row = st.text_input('Row', label_visibility = 'collapsed', key = i*3+3)
@@ -821,6 +826,7 @@ Please ask the department secretary for more accurate and timely information.'''
     teaching_load = [complete_list[complete_list['Instructor'] == prof_unique['Professor'].iloc[i]]\
                      ['Subject Code'].value_counts().to_dict() for i in range(len(prof_unique))]
     prof_unique['Teaching Load'] = teaching_load
+
     subjs_taught = [complete_list[complete_list['Instructor'] == prof_unique['Professor'].iloc[i]]\
                      ['Subject Code'].unique() for i in range(len(prof_unique))]
     prof_unique['Subjects Taught'] = subjs_taught
@@ -843,12 +849,13 @@ Please ask the department secretary for more accurate and timely information.'''
     # st.write(more_than_one_prof)
 
 with tab6:
-    room_unique = pd.Series(complete_list['Room'].unique()).sort_values().reset_index()\
+    room_multiple = complete_list['Room'].str.split(';', expand = True)
+    room_unique = pd.DataFrame(pd.concat([room_multiple[col] for col in room_multiple.columns]).unique())
+    room_unique['Room'] = room_unique[0].str.strip()
+    room_unique = pd.Series(room_unique['Room'].unique()).sort_values().reset_index()\
                   .drop(columns = ['index']).rename(columns = {0 : 'Room'})
-    room_unique = room_unique[~room_unique['Room'].str.contains(';')].reset_index().drop(columns = ['index'])
     room_unique = room_unique[room_unique['Room'] != 'TBA'].reset_index().drop(columns = ['index'])
-    # st.write(room_unique)
-
+    
     room_input = st.selectbox('Which room\'s schedule do you want to find?', room_unique, index = None,
                               help = '''Note that these subjects and rooms are only based on AISIS.
 There may be anomalies here, such as a TBA classroom not being updated, or a class having been moved to a different room.
@@ -891,10 +898,10 @@ Please ask the department secretary for more accurate and timely information.'''
 with tab7:
     # Buildings Processing
 
-    complete_rooms = pd.Series(complete_list['Room'].unique()).sort_values()\
-                         .reset_index().rename(columns = {0 : 'Room'}).drop(columns = ['index'])
+    complete_rooms = room_unique
     complete_rooms['Building'] = complete_rooms['Room']
-
+    st.write(complete_rooms)
+    
     bldg_dict = {
         'Arete' : ['ABS CBN CORPORATION INNOVATION CLASSROOM', 'ART GAL',
                    'BLACK BOX THEATER FA', 'BRAZIER KITCHEN',
@@ -919,7 +926,8 @@ with tab7:
             complete_bldg_dict[room] = key
     # st.write(complete_bldg_dict)
 
-    complete_rooms = complete_rooms.replace({'Building' : complete_bldg_dict})    
+    complete_rooms = complete_rooms.replace({'Building' : complete_bldg_dict}).dropna(how = 'all')
+    st.write(complete_rooms)
     for i in range(len(complete_rooms)):
         for bldg in ['B', 'BEL', 'C', 'F', 'G', 'K']: # Bldg-Room
             complete_rooms['Building'][i] = re.sub(f'^{bldg}-.+', f'{bldg}', complete_rooms['Building'][i])
