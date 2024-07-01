@@ -12,6 +12,10 @@ from pandas.errors import EmptyDataError
 st.set_page_config(layout = 'wide')
 st.title('FACILE Scheduler')
 
+# Things to Edit
+version = 'Version 5.3, Last updated: 1 July 2024 (for AY2425-S1)'
+folder = 'schedules_2024-1_20240630_2220/'
+
 # Functions
 
 def convert(schedule):
@@ -63,7 +67,7 @@ df_list = []
 for i in range(len(dept_short_names)):
     # edit this whenever changing the schedules
     try:
-        df = pd.read_csv('schedules_202400_20240601/'+dept_short_names[i]+'.csv')
+        df = pd.read_csv(folder+dept_short_names[i]+'.csv')
         df['Department'] = dept_full_names[i]
         df_list.append(df)
     except EmptyDataError:
@@ -117,7 +121,7 @@ two_schedules['Modified Schedule'] = multiple(two_schedules['Time'])
 # st.dataframe(two_schedules)
 
 st.write('FACILE: Free Assistance for Class Indices in the Luck-Based Enlistment')
-st.write('Version 5.2, Last updated: 1 June 2024')
+st.write(version)
 
 # Tabs
 
@@ -526,6 +530,10 @@ you want to access.''')
         st.write('You can copy the processed links from here:')            
         return links
 
+    nsubjs_syl = st.number_input('Number of Subjects', 1, 10,
+                                 help = 'Input the number of subjects whose syllabus you want to check, from 1 to 10.')
+    st.write(view_syllabus(nsubjs_syl))
+
     st.subheader('A. Steps for Automatic')
     url = 'https://chrome.google.com/webstore/detail/open-multiple-urls/oifijhaokejakekmnjmphonojcfkpbbh/related?hl=en'
     st.write('''1. Under "Number of Subjects", input the number of classes whose syllabi you want to check.
@@ -623,10 +631,6 @@ https://aisis.ateneo.edu/syllabi/2020/2/CS-PE-PHYED111-PUEN_D-N-Q4-2020-2.pdf
 https://aisis.ateneo.edu/syllabi/2022/1/CS-ES-ENVI10.01-CABALLES_D-CA-C-2022-1.pdf
 https://aisis.ateneo.edu/syllabi/2022/1/CS-SOHUM-DLQ10-SUAREZ_V-PH-A-2022-1.pdf''')
     st.write('''The syllabi from the school year 2020–2021 and earlier seemed to work before, but not as of 24 January 2024''')
-
-    nsubjs_syl = st.number_input('Number of Subjects', 1, 10,
-                                 help = 'Input the number of subjects whose syllabus you want to check, from 1 to 10.')
-    st.write(view_syllabus(nsubjs_syl))
 
     st.header('II. Old Schedule Viewer')
     st.write('''This is for classes not under the Dropdown menu of “School Year and Term”.
@@ -900,24 +904,25 @@ with tab7:
 
     complete_rooms = room_unique
     complete_rooms['Building'] = complete_rooms['Room']
-    st.write(complete_rooms)
+    # st.write(complete_rooms)
     
     bldg_dict = {
         'Arete' : ['ABS CBN CORPORATION INNOVATION CLASSROOM', 'ART GAL',
                    'BLACK BOX THEATER FA', 'BRAZIER KITCHEN',
                    'CO BUN TING AND PO TY LEE CO MAC LAB', "COLLEGE '66 CO-LAB", 'FA DEPT',
                    'INNOVATION 201', 'INNOVATION 202', 'JOSEPH AND GEMMA TANBUNTIONG STUDIO',
-                   'NATIONAL BOOKSTORE ATELIER', 'YAO SIU LUN MAC LAB'],
-        'PE Complex' : ['COV COURTS', 'DANCE AREA', 'LS POOL', 'MARTIAL ARTS CE',
-                        'MARTIAL ARTS RM', 'MULTI-PUR RM', 'TAB TEN AREA', 'TENNIS CRT', 'WEIGHTS GYM'],
-        'LH' : ['DS DEPT', 'EC DEPT', 'EU DEPT', 'JSP OFFICE', 'POS DEPT'],
-        'SS' : ['COM STUD', 'CORD TRNG RM', 'GROUP THERAPY RM', 'PSY COMP RM'],
-        'DLC' : ['EN DEPT', 'FIL DEPT', 'IS DEPT', 'PH DEPT', 'TH DEPT'],
-        'F' : ['PS DEPT'],
+                   'NATIONAL BOOKSTORE ATELIER', 'YAO SIU LUN MAC LAB'],  
         'C' : ['CH DEPT'],
         'CTC' : ['HSC DEPT'],
+        'DLC' : ['EN DEPT', 'FIL DEPT', 'IS DEPT', 'PH DEPT', 'TH DEPT'],
+        'F' : ['CS DEPT', 'PS DEPT'],
+        'LH' : ['DS DEPT', 'EC DEPT', 'EU DEPT', 'JSP OFFICE', 'POS DEPT'],
+        'MO' : ['ES DEPT'],
+        'PE Complex' : ['COV COURTS', 'DANCE AREA', 'LS POOL', 'MARTIAL ARTS CE',
+                        'MARTIAL ARTS RM', 'MULTI-PUR RM', 'TAB TEN AREA', 'TENNIS CRT', 'WEIGHTS GYM'],      
+        'SEC-A' : ['BIO DEPT', 'MA DEPT'],
         'SOM' : ['L&S DEPT', 'QMIT OFFICE'],
-        'MO' : ['ES DEPT']
+        'SS' : ['COM STUD', 'CORD TRNG RM', 'GROUP THERAPY RM', 'PSY COMP RM']
     }
 
     complete_bldg_dict = {}
@@ -927,7 +932,7 @@ with tab7:
     # st.write(complete_bldg_dict)
 
     complete_rooms = complete_rooms.replace({'Building' : complete_bldg_dict}).dropna(how = 'all')
-    st.write(complete_rooms)
+    # st.write(complete_rooms)
     for i in range(len(complete_rooms)):
         for bldg in ['B', 'BEL', 'C', 'F', 'G', 'K']: # Bldg-Room
             complete_rooms['Building'][i] = re.sub(f'^{bldg}-.+', f'{bldg}', complete_rooms['Building'][i])
@@ -989,7 +994,7 @@ with tab7:
 
 with tab8:
     st.subheader('About Me and the Project')
-    st.write('''I am Sted Micah Cheng from 3 BS Applied Mathematics - Data Science.
+    st.write('''I am Sted Micah Cheng from 4 BS Applied Mathematics - Data Science.
 \nThe first major project in this website is FACILE (Free Assistance for Class Indices in the Luck-Based Enlistment).
 It started from a simple idea to avoid scrolling through lists of schedules, with only first and second year core elective subjects
 (NatSc, PHILO 11, FLC, and PE) where one had to manually input the schedule (e.g. M-TH 0800-0930) to the Python code
