@@ -13,8 +13,8 @@ st.set_page_config(layout = 'wide')
 st.title('FACILE Scheduler')
 
 # Things to Edit
-version = 'Version 5.3, Last updated: 1 July 2024 (for AY2425-S1)'
-folder = 'schedules_2024-1_20240630_2220/'
+version = 'Version 5.4, Last updated: 20240704 2024 (for AY2425-S1)'
+folder = 'schedules_2024-1_20240704_2024/'
 
 # Functions
 
@@ -334,7 +334,7 @@ If there are errors, please check what you pasted, or you can also do the manual
         all_subjects['Status'] = create_status_list(all_subjects)
         st.write(f'Here are the subjects offered by the Department of {input_dept} that have no conflicts with your schedule:')
         filtered_subjects = all_subjects[all_subjects['Status'] == 'Open']
-        filtered_subjects_display = all_subjects.drop(['Department', 'Modified Schedule',
+        filtered_subjects_display = filtered_subjects.drop(['Department', 'Modified Schedule',
                                                        'Subject Code and Name', 'Display Schedule', 'Status'], axis = 1).astype({'Units' : 'int'})
         st.dataframe(filtered_subjects_display.style.apply(formatter, axis = None))
 
@@ -349,7 +349,7 @@ If there are errors, please check what you pasted, or you can also do the manual
         all_sections['Status'] = create_status_list(all_sections)
         st.write(f'Here are the sections for {input_subj} that have no conflicts with your schedule:')
         filtered_sections = all_sections[all_sections['Status'] == 'Open']
-        filtered_sections_display = all_sections.drop(['Department', 'Modified Schedule',
+        filtered_sections_display = filtered_sections.drop(['Department', 'Modified Schedule',
                                                        'Subject Code and Name', 'Display Schedule', 'Status'], axis = 1).astype({'Units' : 'int'})
         st.dataframe(filtered_sections_display.style.apply(formatter, axis = None))
 

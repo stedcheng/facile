@@ -1,6 +1,6 @@
 FACILE: Free Assistance for Class Indices in the Luck-Based Enlistment
-Version 5.3
-As of 1 July 2024
+Version 5.4
+As of 4 July 2024
 
 Contains the following:
 app.py - main code
