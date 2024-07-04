@@ -137,12 +137,12 @@ with tab1:
                                 help = '''If you check this box, there will be a space for you to paste the information about\
 the number of subjects you have, as well as your departments, subjects, and sections. In short, this avoids you having to manually input
 everything. If this is your first time using FACILE, then uncheck the box.''')
-    
     if save_checkbox:
         st.subheader('With Existing Schedule')
         save_str = st.text_input('Paste your existing schedule here, then press Enter:')
         try:
             save_dict = json.loads(save_str)
+            st.write(save_dict)
             nsubjs, depts, subjs, sects = save_dict['nsubjs'], save_dict['depts'], save_dict['subjs'], save_dict['sects']
             st.write('''Please proceed to the next tab entitled "Schedule" and confirm that the schedule displayed there is correct.
 If there are errors, please check what you pasted, or you can also do the manual input again.''')
@@ -369,7 +369,7 @@ If there are errors, please check what you pasted, or you can also do the manual
     st.write('You can copy the box below, so that if you want to use FACILE next time, you can paste this information\
              instead of having to manually input each department, subject, and section.')
     copy = {'nsubjs' : nsubjs, 'depts' : depts, 'subjs' : subjs, 'sects' : sects}
-    st.code(copy)
+    st.write(copy) #st.code(copy)
     
 with tab2:
     if duplicates == 'N/A':
