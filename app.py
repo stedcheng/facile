@@ -461,7 +461,8 @@ you want to access.''')
                 col0, col1, col2, col3 = st.columns([0.05, 0.1, 0.1, 0.5])
                 with col0: st.write(i+1)
                 with col1:
-                    year = st.number_input('Year', 2018, 2025, value = 2024, label_visibility = 'collapsed', key = i*3+1)
+                    default_year = pd.Timestamp.today().year if pd.Timestamp.today().month >= 8 else pd.Timestamp.today().year - 1
+                    year = st.number_input('Year', 2018, 2100, value = default_year, label_visibility = 'collapsed', key = i*3+1)
                     year = str(year)
                 with col2:
                     semester = st.number_input('Semester', 0, 2, value = 0, label_visibility = 'collapsed', key = i*3+2)
